@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PaySu - Mobile Banking</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#0d7b3a',secondary:'#f0f9f4'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Inter', sans-serif;
+background: #ffffff;
+height: 100vh;
+overflow-x: hidden;
+position: relative;
+}
+.gradient-card {
+background: linear-gradient(135deg, #0d7b3a 0%, #15a94f 100%);
+}
+.hide-scrollbar::-webkit-scrollbar {
+display: none;
+}
+.hide-scrollbar {
+-ms-overflow-style: none;
+scrollbar-width: none;
+}
+.transaction-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+}
+.animated-circle {
+position: absolute;
+border: 2px solid #0d7b3a;
+border-radius: 50%;
+opacity: 0.2;
+z-index: -1;
+}
+.wave-circle {
+position: absolute;
+border-radius: 50%;
+z-index: -1;
+background: radial-gradient(circle, rgba(13,123,58,0.2) 0%, rgba(21,169,79,0.1) 50%, rgba(240,249,244,0.05) 100%);
+animation: waveEffect 8s infinite ease-in-out;
+}
+@keyframes moveCircle {
+0% {
+transform: translate(0, 0);
+}
+25% {
+transform: translate(10px, 15px);
+}
+50% {
+transform: translate(-5px, 20px);
+}
+75% {
+transform: translate(-15px, 5px);
+}
+100% {
+transform: translate(0, 0);
+}
+}
+@keyframes waveEffect {
+0%, 100% {
+transform: scale(0.8);
+opacity: 0.3;
+}
+50% {
+transform: scale(1);
+opacity: 0.2;
+}
+}
+</style>
+</head>
+<body class="bg-white">
+<div class="relative w-[375px] mx-auto h-[762px] overflow-y-auto overflow-x-hidden pb-16">
+<!-- Nav Bar -->
+<div class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-sm shadow-sm">
+<div class="flex items-center justify-between px-4 py-3">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-notification-3-line ri-lg text-gray-700"></i>
+</div>
+<div class="flex items-center">
+<img src="https://static.readdy.ai/image/1f65b128a794fd8f2ab71819fe1f8dad/1cf9a04639594e7fd5894794bb3cb5ae.png" alt="PaySr Logo" class="h-8">
+</div>
+<div class="w-8 h-8 flex items-center justify-center cursor-pointer" id="profileButton">
+<div class="w-8 h-8 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center">
+<i class="ri-user-line ri-lg text-gray-700"></i>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Content -->
+<div class="pt-16 pb-20 px-4">
+<!-- Balance Section -->
+<div class="mt-4">
+<div class="flex justify-between items-center">
+<div>
+<p class="text-sm text-gray-500">Available Balance</p>
+<div class="flex items-center gap-2">
+<h1 id="balanceDisplay" class="text-3xl font-semibold">SRD 4,285.75</h1>
+<button id="toggleBalance" class="w-6 h-6 flex items-center justify-center">
+<i id="eyeIcon" class="ri-eye-line ri-lg text-gray-600"></i>
+</button>
+</div>
+</div>
+<button id="addMoneyBtn" class="bg-primary text-white px-3 py-1.5 !rounded-button flex items-center gap-1 text-sm">
+<i class="ri-add-line"></i>
+<span>Add Money</span>
+</button>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<p class="text-xs text-gray-500">Last updated: Today, 10:45 AM</p>
+<div class="flex items-center gap-1 bg-green-100 px-2 py-0.5 rounded-full">
+<div class="w-2 h-2 bg-green-500 rounded-full"></div>
+<span class="text-xs text-green-700">Online</span>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="mt-6">
+<div class="flex justify-between overflow-x-auto hide-scrollbar py-2 gap-4">
+<div class="flex flex-col items-center gap-1 min-w-[64px] cursor-pointer">
+<div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+<i class="ri-send-plane-fill ri-lg text-primary"></i>
+</div>
+<span class="text-xs text-gray-700 whitespace-nowrap">Send</span>
+</div>
+<div class="flex flex-col items-center gap-1 min-w-[64px] cursor-pointer">
+<div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+<i class="ri-arrow-down-line ri-lg text-primary"></i>
+</div>
+<span class="text-xs text-gray-700 whitespace-nowrap">Request</span>
+</div>
+<div class="flex flex-col items-center gap-1 min-w-[64px] cursor-pointer">
+<div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+<i class="ri-qr-scan-line ri-lg text-primary"></i>
+</div>
+<span class="text-xs text-gray-700 whitespace-nowrap">Scan QR</span>
+</div>
+<div class="flex flex-col items-center gap-1 min-w-[64px] cursor-pointer">
+<div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+<i class="ri-contactless-line ri-lg text-primary"></i>
+</div>
+<span class="text-xs text-gray-700 whitespace-nowrap">NFC Pay</span>
+</div>
+</div>
+</div>
+<!-- Main Account Card -->
+<div class="mt-6">
+<div class="gradient-card rounded-lg p-4 text-white">
+<div class="flex justify-between items-center">
+<div>
+<p class="text-xs text-white/80">Main Account</p>
+<h2 class="text-xl font-semibold mt-1">SRD 4,285.75</h2>
+</div>
+<div class="w-10 h-10 flex items-center justify-center bg-white/20 rounded-full">
+<i class="ri-bank-card-line ri-lg text-white"></i>
+</div>
+</div>
+<div class="mt-4">
+<p class="text-xs text-white/80">Account Number</p>
+<p class="text-sm font-medium">•••• •••• •••• 4587</p>
+</div>
+<div class="mt-3 flex justify-between items-center">
+<div>
+<p class="text-xs text-white/80">Daily Limit</p>
+<div class="flex items-center gap-2 mt-1">
+<div class="w-24 h-1.5 bg-white/30 rounded-full">
+<div class="h-full w-3/4 bg-white rounded-full"></div>
+</div>
+<span class="text-xs">75%</span>
+</div>
+</div>
+<button class="bg-white text-primary px-3 py-1.5 !rounded-button text-sm font-medium">
+Details
+</button>
+</div>
+</div>
+</div>
+<!-- Connected Banks -->
+<div class="mt-6">
+<div class="flex justify-between items-center mb-3">
+<h3 class="font-medium">Connected Banks</h3>
+<button class="text-primary text-sm">Manage</button>
+</div>
+<div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+<div class="min-w-[140px] bg-white shadow-sm rounded-lg p-3 border border-gray-100 cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+<i class="ri-bank-fill ri-lg text-blue-600"></i>
+</div>
+<h4 class="text-sm font-medium">DSB Bank</h4>
+<p class="text-xs text-gray-500 mt-1">Connected</p>
+</div>
+<div class="min-w-[140px] bg-white shadow-sm rounded-lg p-3 border border-gray-100 cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mb-2">
+<i class="ri-bank-fill ri-lg text-red-600"></i>
+</div>
+<h4 class="text-sm font-medium">Hakrin Bank</h4>
+<p class="text-xs text-gray-500 mt-1">Connected</p>
+</div>
+<div class="min-w-[140px] bg-white shadow-sm rounded-lg p-3 border border-gray-100 cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mb-2">
+<i class="ri-bank-fill ri-lg text-yellow-600"></i>
+</div>
+<h4 class="text-sm font-medium">Republic Bank</h4>
+<p class="text-xs text-gray-500 mt-1">Connected</p>
+</div>
+<div class="min-w-[140px] bg-white shadow-sm rounded-lg p-3 border border-gray-100 cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mb-2">
+<i class="ri-bank-fill ri-lg text-purple-600"></i>
+</div>
+<h4 class="text-sm font-medium">Finabank</h4>
+<p class="text-xs text-gray-500 mt-1">Connected</p>
+</div>
+<div class="min-w-[140px] bg-white shadow-sm rounded-lg p-3 border border-gray-100 cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mb-2">
+<i class="ri-add-line ri-lg text-gray-600"></i>
+</div>
+<h4 class="text-sm font-medium">Add Bank</h4>
+<p class="text-xs text-gray-500 mt-1">Connect new</p>
+</div>
+</div>
+</div>
+<!-- Payment Methods -->
+<div class="mt-6">
+<div class="flex justify-between items-center mb-3">
+<h3 class="font-medium">Payment Methods</h3>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100 cursor-pointer" id="nfcPaymentCard">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+<i class="ri-contactless-line ri-lg text-primary"></i>
+</div>
+<div class="w-4 h-4 bg-green-100 rounded-full flex items-center justify-center">
+<div class="w-2 h-2 bg-green-500 rounded-full"></div>
+</div>
+</div>
+<h4 class="text-sm font-medium mt-2">NFC Payment</h4>
+<p class="text-xs text-gray-500 mt-1">Active</p>
+</div>
+<div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100 cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+<i class="ri-qr-code-line ri-lg text-primary"></i>
+</div>
+<div class="w-4 h-4 bg-green-100 rounded-full flex items-center justify-center">
+<div class="w-2 h-2 bg-green-500 rounded-full"></div>
+</div>
+</div>
+<h4 class="text-sm font-medium mt-2">QR Payment</h4>
+<p class="text-xs text-gray-500 mt-1">Active</p>
+</div>
+</div>
+</div>
+<!-- Recent Transactions -->
+<div class="mt-6">
+<div class="flex justify-between items-center mb-3">
+<h3 class="font-medium">Recent Transactions</h3>
+<button class="text-primary text-sm">See All</button>
+</div>
+<div class="space-y-3">
+<div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+<i class="ri-shopping-bag-line ri-lg text-blue-600"></i>
+</div>
+<div>
+<h4 class="text-sm font-medium">Choi's Supermarket</h4>
+<p class="text-xs text-gray-500">Today, 9:45 AM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-medium text-red-600">-SRD 125.50</p>
+<div class="flex items-center justify-end gap-1 mt-0.5">
+<div class="transaction-dot bg-green-500"></div>
+<span class="text-xs text-gray-500">Completed</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+<i class="ri-user-line ri-lg text-purple-600"></i>
+</div>
+<div>
+<h4 class="text-sm font-medium">Jennifer Pawiroredjo</h4>
+<p class="text-xs text-gray-500">Yesterday, 4:30 PM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-medium text-green-600">+SRD 350.00</p>
+<div class="flex items-center justify-end gap-1 mt-0.5">
+<div class="transaction-dot bg-green-500"></div>
+<span class="text-xs text-gray-500">Received</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+<i class="ri-restaurant-line ri-lg text-orange-600"></i>
+</div>
+<div>
+<h4 class="text-sm font-medium">Javanese Kitchen</h4>
+<p class="text-xs text-gray-500">Apr 5, 7:15 PM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-medium text-red-600">-SRD 87.25</p>
+<div class="flex items-center justify-end gap-1 mt-0.5">
+<div class="transaction-dot bg-green-500"></div>
+<span class="text-xs text-gray-500">Completed</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Upcoming Bills -->
+<div class="mt-6">
+<div class="flex justify-between items-center mb-3">
+<h3 class="font-medium">Upcoming Bills</h3>
+<button class="text-primary text-sm">See All</button>
+</div>
+<div class="space-y-3">
+<div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+<i class="ri-flashlight-line ri-lg text-red-600"></i>
+</div>
+<div>
+<h4 class="text-sm font-medium">Electricity Bill</h4>
+<p class="text-xs text-gray-500">Due in 3 days</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-medium">SRD 215.75</p>
+<button class="text-xs text-white bg-primary px-2 py-1 !rounded-button mt-1">Pay Now</button>
+</div>
+</div>
+</div>
+<div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+<i class="ri-wifi-line ri-lg text-blue-600"></i>
+</div>
+<div>
+<h4 class="text-sm font-medium">Internet Service</h4>
+<p class="text-xs text-gray-500">Due in 5 days</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-medium">SRD 150.00</p>
+<button class="text-xs text-white bg-primary px-2 py-1 !rounded-button mt-1">Pay Now</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Saving Goals -->
+<div class="mt-6">
+<div class="flex justify-between items-center mb-3">
+<h3 class="font-medium">Saving Goals</h3>
+<button class="text-primary text-sm">Add New</button>
+</div>
+<div class="space-y-3">
+<div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+<div class="flex justify-between items-center mb-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+<i class="ri-home-4-line ri-lg text-purple-600"></i>
+</div>
+<div>
+<h4 class="text-sm font-medium">New Home</h4>
+<p class="text-xs text-gray-500">Target: SRD 75,000.00</p>
+</div>
+</div>
+<p class="text-sm font-medium">35%</p>
+</div>
+<div class="w-full h-2 bg-gray-200 rounded-full">
+<div class="h-full w-[35%] bg-purple-500 rounded-full"></div>
+</div>
+<div class="flex justify-between mt-2">
+<p class="text-xs text-gray-500">SRD 26,250.00 saved</p>
+<p class="text-xs text-gray-500">SRD 48,750.00 to go</p>
+</div>
+</div>
+<div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+<div class="flex justify-between items-center mb-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+<i class="ri-plane-line ri-lg text-blue-600"></i>
+</div>
+<div>
+<h4 class="text-sm font-medium">Vacation</h4>
+<p class="text-xs text-gray-500">Target: SRD 8,000.00</p>
+</div>
+</div>
+<p class="text-sm font-medium">65%</p>
+</div>
+<div class="w-full h-2 bg-gray-200 rounded-full">
+<div class="h-full w-[65%] bg-blue-500 rounded-full"></div>
+</div>
+<div class="flex justify-between mt-2">
+<p class="text-xs text-gray-500">SRD 5,200.00 saved</p>
+<p class="text-xs text-gray-500">SRD 2,800.00 to go</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Tab Bar -->
+<div class="fixed bottom-0 w-full bg-white border-t border-gray-200 z-50">
+<div class="grid grid-cols-5 h-16">
+<div class="flex flex-col items-center justify-center cursor-pointer">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-home-5-fill ri-lg text-primary"></i>
+</div>
+<span class="text-xs text-primary mt-1">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center cursor-pointer">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-bank-card-line ri-lg text-gray-500"></i>
+</div>
+<span class="text-xs text-gray-500 mt-1">Cards</span>
+</div>
+<div class="flex flex-col items-center justify-center relative cursor-pointer" id="payButton">
+<div class="absolute -top-6 w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg">
+<img src="https://static.readdy.ai/image/1f65b128a794fd8f2ab71819fe1f8dad/1cf9a04639594e7fd5894794bb3cb5ae.png" alt="PaySr Logo" class="h-8">
+</div>
+<span class="text-xs text-gray-500 mt-8">Pay</span>
+</div>
+<div class="flex flex-col items-center justify-center cursor-pointer">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-pie-chart-line ri-lg text-gray-500"></i>
+</div>
+<span class="text-xs text-gray-500 mt-1">Analytics</span>
+</div>
+<a href="https://readdy.ai/home/68aa2166-d9c2-4a1a-9e8b-f6c2b28fe13a/17147c71-f85e-4d51-aac3-40b3a83dd7a8" data-readdy="true" class="flex flex-col items-center justify-center cursor-pointer">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-settings-3-line ri-lg text-gray-500"></i>
+</div>
+<span class="text-xs text-gray-500 mt-1">Settings</span>
+</a>
+</div>
+</div>
+</div>
+<script>
+// Create animated background circles
+function createAnimatedBackground() {
+const container = document.body;
+const circleCount = 6;
+const waveCount = 4;
+// Create wave circles
+for (let i = 0; i < waveCount; i++) {
+const circle = document.createElement('div');
+circle.className = 'wave-circle';
+// Random size between 150px and 350px
+const size = Math.floor(Math.random() * 200) + 150;
+circle.style.width = `${size}px`;
+circle.style.height = `${size}px`;
+// Random position
+const posX = Math.floor(Math.random() * window.innerWidth);
+const posY = Math.floor(Math.random() * window.innerHeight);
+circle.style.left = `${posX}px`;
+circle.style.top = `${posY}px`;
+// Animation with random duration
+const duration = Math.floor(Math.random() * 5) + 6;
+circle.style.animation = `waveEffect ${duration}s infinite ease-in-out`;
+// Random animation delay
+circle.style.animationDelay = `${Math.random() * 3}s`;
+container.appendChild(circle);
+}
+// Create moving circles
+for (let i = 0; i < circleCount; i++) {
+const circle = document.createElement('div');
+circle.className = 'animated-circle';
+// Random size between 100px and 300px
+const size = Math.floor(Math.random() * 200) + 100;
+circle.style.width = `${size}px`;
+circle.style.height = `${size}px`;
+// Random position
+const posX = Math.floor(Math.random() * window.innerWidth);
+const posY = Math.floor(Math.random() * window.innerHeight);
+circle.style.left = `${posX}px`;
+circle.style.top = `${posY}px`;
+// Animation with random duration between 15-30s
+const duration = Math.floor(Math.random() * 15) + 15;
+circle.style.animation = `moveCircle ${duration}s infinite ease-in-out`;
+// Random animation delay
+circle.style.animationDelay = `${Math.random() * 5}s`;
+container.appendChild(circle);
+}
+}
+// Profile menu functionality
+function createProfileMenu() {
+const profileMenu = document.createElement('div');
+profileMenu.id = 'profileMenu';
+profileMenu.className = 'fixed top-14 right-4 bg-white shadow-lg rounded-lg w-64 z-50 border border-gray-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-200 ease-in-out';
+profileMenu.style.visibility = 'hidden';
+profileMenu.innerHTML = `
+<div class="p-4 border-b border-gray-100">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center">
+<i class="ri-user-line ri-xl text-gray-700"></i>
+</div>
+<div>
+<h4 class="font-medium">Michael Fernandes</h4>
+<p class="text-xs text-gray-500">Premium Account</p>
+</div>
+</div>
+</div>
+<div class="py-2">
+<a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-user-settings-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Account Settings</span>
+</a>
+<a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-shield-keyhole-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Security</span>
+</a>
+<a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-notification-3-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Notifications</span>
+</a>
+<a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-question-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Help & Support</span>
+</a>
+</div>
+<div class="border-t border-gray-100 p-2">
+<a href="#" class="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-gray-50">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-logout-box-line ri-lg text-red-600"></i>
+</div>
+<span class="text-sm">Sign Out</span>
+</a>
+</div>
+`;
+document.body.appendChild(profileMenu);
+return profileMenu;
+}
+function toggleProfileMenu() {
+const profileMenu = document.getElementById('profileMenu') || createProfileMenu();
+if (profileMenu.style.visibility === 'hidden') {
+profileMenu.style.visibility = 'visible';
+setTimeout(() => {
+profileMenu.style.opacity = '1';
+profileMenu.style.transform = 'scale(1)';
+}, 50);
+} else {
+profileMenu.style.opacity = '0';
+profileMenu.style.transform = 'scale(0.95)';
+setTimeout(() => {
+profileMenu.style.visibility = 'hidden';
+}, 200);
+}
+}
+// Close profile menu when clicking outside
+document.addEventListener('click', (e) => {
+const profileMenu = document.getElementById('profileMenu');
+const profileButton = document.getElementById('profileButton');
+if (profileMenu && profileButton && !profileMenu.contains(e.target) && !profileButton.contains(e.target)) {
+profileMenu.style.opacity = '0';
+profileMenu.style.transform = 'scale(0.95)';
+setTimeout(() => {
+profileMenu.style.visibility = 'hidden';
+}, 200);
+}
+});
+// Toggle balance visibility
+const toggleBalance = document.getElementById('toggleBalance');
+const balanceDisplay = document.getElementById('balanceDisplay');
+const eyeIcon = document.getElementById('eyeIcon');
+let isBalanceHidden = false;
+toggleBalance.addEventListener('click', () => {
+isBalanceHidden = !isBalanceHidden;
+if (isBalanceHidden) {
+balanceDisplay.textContent = '••••••••';
+eyeIcon.className = 'ri-eye-off-line ri-lg text-gray-600';
+} else {
+balanceDisplay.textContent = 'SRD 4,285.75';
+eyeIcon.className = 'ri-eye-line ri-lg text-gray-600';
+}
+});
+// NFC Payment Modal
+const nfcPaymentCard = document.getElementById('nfcPaymentCard');
+let nfcModalOpen = false;
+let nfcEnabled = true;
+let requirePin = true;
+let transactionLimit = 500;
+function createNfcModal() {
+// Create modal container
+const modalOverlay = document.createElement('div');
+modalOverlay.className = 'fixed inset-0 bg-black/50 z-[100] flex items-center justify-center';
+modalOverlay.id = 'nfcModal';
+// Create modal content
+const modalContent = document.createElement('div');
+modalContent.className = 'bg-white rounded-lg w-[90%] max-h-[80%] overflow-y-auto';
+// Modal header
+const modalHeader = document.createElement('div');
+modalHeader.className = 'flex justify-between items-center p-4 border-b border-gray-200';
+modalHeader.innerHTML = `
+<h3 class="text-lg font-medium">NFC Payment Settings</h3>
+<button id="closeNfcModal" class="w-8 h-8 flex items-center justify-center">
+<i class="ri-close-line ri-lg text-gray-600"></i>
+</button>
+`;
+// Modal body
+const modalBody = document.createElement('div');
+modalBody.className = 'p-4';
+// NFC Status toggle
+const nfcStatusSection = document.createElement('div');
+nfcStatusSection.className = 'mb-6';
+nfcStatusSection.innerHTML = `
+<div class="flex justify-between items-center">
+<div>
+<h4 class="font-medium">NFC Payment</h4>
+<p class="text-sm text-gray-500 mt-1">Enable or disable contactless payments</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" id="nfcToggle" class="sr-only peer" ${nfcEnabled ? 'checked' : ''}>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+`;
+// Transaction limit
+const transactionLimitSection = document.createElement('div');
+transactionLimitSection.className = 'mb-6';
+transactionLimitSection.innerHTML = `
+<h4 class="font-medium mb-2">Transaction Limit</h4>
+<p class="text-sm text-gray-500 mb-3">Maximum amount for contactless payments</p>
+<div class="flex items-center gap-3">
+<input type="range" id="limitSlider" min="100" max="1000" step="50" value="${transactionLimit}" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+<span id="limitValue" class="text-sm font-medium min-w-[80px]">SRD ${transactionLimit}</span>
+</div>
+`;
+// Security settings
+const securitySection = document.createElement('div');
+securitySection.className = 'mb-6';
+securitySection.innerHTML = `
+<h4 class="font-medium mb-2">Security Settings</h4>
+<div class="flex justify-between items-center mt-3">
+<div>
+<p class="text-sm font-medium">Require PIN for all transactions</p>
+<p class="text-xs text-gray-500 mt-1">Additional security for all NFC payments</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" id="pinToggle" class="sr-only peer" ${requirePin ? 'checked' : ''}>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+`;
+// Recent transactions
+const recentTransactionsSection = document.createElement('div');
+recentTransactionsSection.className = 'mb-6';
+recentTransactionsSection.innerHTML = `
+<h4 class="font-medium mb-3">Recent NFC Transactions</h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+<div>
+<p class="text-sm font-medium">Choi's Supermarket</p>
+<p class="text-xs text-gray-500">Today, 9:45 AM</p>
+</div>
+<p class="text-sm font-medium text-red-600">-SRD 125.50</p>
+</div>
+<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+<div>
+<p class="text-sm font-medium">Javanese Kitchen</p>
+<p class="text-xs text-gray-500">Apr 5, 7:15 PM</p>
+</div>
+<p class="text-sm font-medium text-red-600">-SRD 87.25</p>
+</div>
+</div>
+`;
+// Supported devices
+const supportedDevicesSection = document.createElement('div');
+supportedDevicesSection.className = 'mb-6';
+supportedDevicesSection.innerHTML = `
+<h4 class="font-medium mb-2">Supported Devices</h4>
+<p class="text-sm text-gray-600 mb-2">Your NFC payment is currently active on:</p>
+<div class="p-3 bg-gray-50 rounded-lg mb-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+<i class="ri-smartphone-line ri-lg text-gray-600"></i>
+</div>
+<div>
+<p class="text-sm font-medium">iPhone 14 Pro</p>
+<p class="text-xs text-gray-500">Last used: Today</p>
+</div>
+</div>
+</div>
+`;
+// How to use section
+const howToUseSection = document.createElement('div');
+howToUseSection.className = 'p-4 bg-primary/10 rounded-lg';
+howToUseSection.innerHTML = `
+<h4 class="font-medium text-primary mb-2">How to use NFC Payment</h4>
+<ul class="text-sm text-gray-700 space-y-2">
+<li class="flex items-start gap-2">
+<i class="ri-checkbox-circle-line text-primary mt-0.5"></i>
+<span>Hold your phone near the contactless payment terminal</span>
+</li>
+<li class="flex items-start gap-2">
+<i class="ri-checkbox-circle-line text-primary mt-0.5"></i>
+<span>Authenticate with your fingerprint, face ID or PIN</span>
+</li>
+<li class="flex items-start gap-2">
+<i class="ri-checkbox-circle-line text-primary mt-0.5"></i>
+<span>Wait for confirmation that your payment is complete</span>
+</li>
+</ul>
+`;
+// Assemble modal
+modalBody.appendChild(nfcStatusSection);
+modalBody.appendChild(transactionLimitSection);
+modalBody.appendChild(securitySection);
+modalBody.appendChild(recentTransactionsSection);
+modalBody.appendChild(supportedDevicesSection);
+modalBody.appendChild(howToUseSection);
+modalContent.appendChild(modalHeader);
+modalContent.appendChild(modalBody);
+modalOverlay.appendChild(modalContent);
+return modalOverlay;
+}
+function openNfcModal() {
+if (nfcModalOpen) return;
+const modal = createNfcModal();
+document.body.appendChild(modal);
+nfcModalOpen = true;
+// Add event listeners
+document.getElementById('closeNfcModal').addEventListener('click', closeNfcModal);
+document.getElementById('nfcToggle').addEventListener('change', (e) => {
+nfcEnabled = e.target.checked;
+});
+document.getElementById('pinToggle').addEventListener('change', (e) => {
+requirePin = e.target.checked;
+});
+const limitSlider = document.getElementById('limitSlider');
+const limitValue = document.getElementById('limitValue');
+limitSlider.addEventListener('input', (e) => {
+transactionLimit = e.target.value;
+limitValue.textContent = `SRD ${transactionLimit}`;
+});
+// Prevent body scrolling
+document.body.style.overflow = 'hidden';
+}
+function closeNfcModal() {
+const modal = document.getElementById('nfcModal');
+if (modal) {
+modal.remove();
+nfcModalOpen = false;
+document.body.style.overflow = '';
+}
+}
+nfcPaymentCard.addEventListener('click', openNfcModal);
+// Add Money Modal
+function createAddMoneyModal() {
+const modalOverlay = document.createElement('div');
+modalOverlay.className = 'fixed inset-0 bg-black/50 z-[100] flex items-center justify-center';
+modalOverlay.id = 'addMoneyModal';
+const modalContent = document.createElement('div');
+modalContent.className = 'bg-white rounded-lg w-[90%] max-h-[80%] overflow-y-auto';
+// Modal header
+const modalHeader = document.createElement('div');
+modalHeader.className = 'flex justify-between items-center p-4 border-b border-gray-200';
+modalHeader.innerHTML = `
+<h3 class="text-lg font-medium">Add Money</h3>
+<button id="closeAddMoneyModal" class="w-8 h-8 flex items-center justify-center">
+<i class="ri-close-line ri-lg text-gray-600"></i>
+</button>
+`;
+// Modal body
+const modalBody = document.createElement('div');
+modalBody.className = 'p-4';
+// Amount input
+const amountSection = document.createElement('div');
+amountSection.className = 'mb-6';
+amountSection.innerHTML = `
+<label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">SRD</span>
+<input type="number" id="amountInput" class="w-full border border-gray-300 rounded-lg py-3 pl-12 pr-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0.00">
+</div>
+`;
+// Payment method selection
+const methodSection = document.createElement('div');
+methodSection.className = 'mb-6';
+methodSection.innerHTML = `
+<label class="block text-sm font-medium text-gray-700 mb-2">Select Payment Method</label>
+<div class="grid grid-cols-2 gap-3">
+<div class="border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-primary" id="bankTransferMethod">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+<i class="ri-bank-line ri-lg text-blue-600"></i>
+</div>
+<span class="text-sm">Bank Transfer</span>
+</div>
+</div>
+<div class="border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-primary" id="cardMethod">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+<i class="ri-bank-card-line ri-lg text-purple-600"></i>
+</div>
+<span class="text-sm">Credit Card</span>
+</div>
+</div>
+</div>
+`;
+// Bank selection (initially hidden)
+const bankSection = document.createElement('div');
+bankSection.className = 'mb-6 hidden';
+bankSection.id = 'bankSelection';
+bankSection.innerHTML = `
+<label class="block text-sm font-medium text-gray-700 mb-2">Select Bank</label>
+<div class="grid grid-cols-2 gap-3">
+<div class="border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-primary">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+<i class="ri-bank-fill ri-lg text-blue-600"></i>
+</div>
+<span class="text-sm">DSB Bank</span>
+</div>
+</div>
+<div class="border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-primary">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+<i class="ri-bank-fill ri-lg text-red-600"></i>
+</div>
+<span class="text-sm">Hakrin Bank</span>
+</div>
+</div>
+<div class="border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-primary">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
+<i class="ri-bank-fill ri-lg text-yellow-600"></i>
+</div>
+<span class="text-sm">Republic Bank</span>
+</div>
+</div>
+<div class="border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-primary">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+<i class="ri-bank-fill ri-lg text-purple-600"></i>
+</div>
+<span class="text-sm">Finabank</span>
+</div>
+</div>
+</div>
+`;
+// Card details (initially hidden)
+const cardSection = document.createElement('div');
+cardSection.className = 'mb-6 hidden';
+cardSection.id = 'cardDetails';
+cardSection.innerHTML = `
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+<input type="text" class="w-full border border-gray-300 rounded-lg py-3 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="1234 5678 9012 3456">
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+<input type="text" class="w-full border border-gray-300 rounded-lg py-3 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="MM/YY">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+<input type="text" class="w-full border border-gray-300 rounded-lg py-3 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="123">
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
+<input type="text" class="w-full border border-gray-300 rounded-lg py-3 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="John Doe">
+</div>
+</div>
+`;
+// Quick amount buttons
+const quickAmountSection = document.createElement('div');
+quickAmountSection.className = 'mb-6';
+quickAmountSection.innerHTML = `
+<label class="block text-sm font-medium text-gray-700 mb-2">Quick Amount</label>
+<div class="flex gap-2 overflow-x-auto hide-scrollbar">
+<button class="quick-amount-btn px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-primary hover:text-white hover:border-primary">SRD 50</button>
+<button class="quick-amount-btn px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-primary hover:text-white hover:border-primary">SRD 100</button>
+<button class="quick-amount-btn px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-primary hover:text-white hover:border-primary">SRD 200</button>
+<button class="quick-amount-btn px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-primary hover:text-white hover:border-primary">SRD 500</button>
+<button class="quick-amount-btn px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-primary hover:text-white hover:border-primary">SRD 1000</button>
+</div>
+`;
+// Add button
+const addButton = document.createElement('button');
+addButton.className = 'w-full bg-primary text-white py-3 !rounded-button font-medium';
+addButton.textContent = 'Add Money';
+addButton.id = 'confirmAddMoney';
+// Assemble modal
+modalBody.appendChild(amountSection);
+modalBody.appendChild(quickAmountSection);
+modalBody.appendChild(methodSection);
+modalBody.appendChild(bankSection);
+modalBody.appendChild(cardSection);
+modalBody.appendChild(addButton);
+modalContent.appendChild(modalHeader);
+modalContent.appendChild(modalBody);
+modalOverlay.appendChild(modalContent);
+return modalOverlay;
+}
+let addMoneyModalOpen = false;
+function openAddMoneyModal() {
+if (addMoneyModalOpen) return;
+const modal = createAddMoneyModal();
+document.body.appendChild(modal);
+addMoneyModalOpen = true;
+// Add event listeners
+document.getElementById('closeAddMoneyModal').addEventListener('click', closeAddMoneyModal);
+document.getElementById('bankTransferMethod').addEventListener('click', () => {
+document.getElementById('bankSelection').classList.remove('hidden');
+document.getElementById('cardDetails').classList.add('hidden');
+document.getElementById('bankTransferMethod').classList.add('border-primary', 'bg-primary/5');
+document.getElementById('cardMethod').classList.remove('border-primary', 'bg-primary/5');
+});
+document.getElementById('cardMethod').addEventListener('click', () => {
+document.getElementById('cardDetails').classList.remove('hidden');
+document.getElementById('bankSelection').classList.add('hidden');
+document.getElementById('cardMethod').classList.add('border-primary', 'bg-primary/5');
+document.getElementById('bankTransferMethod').classList.remove('border-primary', 'bg-primary/5');
+});
+// Quick amount buttons
+const quickAmountBtns = document.querySelectorAll('.quick-amount-btn');
+quickAmountBtns.forEach(btn => {
+btn.addEventListener('click', () => {
+const amount = btn.textContent.replace('SRD ', '');
+document.getElementById('amountInput').value = amount;
+quickAmountBtns.forEach(b => b.classList.remove('bg-primary', 'text-white', 'border-primary'));
+btn.classList.add('bg-primary', 'text-white', 'border-primary');
+});
+});
+// Confirm add money
+document.getElementById('confirmAddMoney').addEventListener('click', () => {
+const amount = document.getElementById('amountInput').value;
+if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+const errorMsg = document.createElement('p');
+errorMsg.className = 'text-red-500 text-sm mt-2';
+errorMsg.textContent = 'Please enter a valid amount';
+const amountInput = document.getElementById('amountInput');
+if (!amountInput.parentNode.querySelector('.text-red-500')) {
+amountInput.parentNode.appendChild(errorMsg);
+}
+return;
+}
+// Show success message
+const successModal = document.createElement('div');
+successModal.className = 'fixed inset-0 bg-black/50 z-[101] flex items-center justify-center';
+successModal.innerHTML = `
+<div class="bg-white rounded-lg p-6 w-[80%] text-center">
+<div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+<i class="ri-check-line ri-2x text-green-600"></i>
+</div>
+<h3 class="text-lg font-medium mb-2">Money Added Successfully</h3>
+<p class="text-gray-600 mb-4">SRD ${amount} has been added to your account.</p>
+<button id="closeSuccessModal" class="bg-primary text-white py-2 px-4 !rounded-button font-medium">Done</button>
+</div>
+`;
+document.body.appendChild(successModal);
+document.getElementById('closeSuccessModal').addEventListener('click', () => {
+successModal.remove();
+closeAddMoneyModal();
+// Update balance
+const currentBalance = parseFloat(document.getElementById('balanceDisplay').textContent.replace('SRD ', '').replace(',', ''));
+const newBalance = (currentBalance + parseFloat(amount)).toFixed(2);
+document.getElementById('balanceDisplay').textContent = `SRD ${newBalance.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+});
+});
+// Prevent body scrolling
+document.body.style.overflow = 'hidden';
+}
+function closeAddMoneyModal() {
+const modal = document.getElementById('addMoneyModal');
+if (modal) {
+modal.remove();
+addMoneyModalOpen = false;
+document.body.style.overflow = '';
+}
+}
+// Payment Options Modal
+function createPaymentOptionsModal() {
+  const modalOverlay = document.createElement('div');
+  modalOverlay.className = 'fixed inset-0 bg-black/50 z-[100] flex items-center justify-center';
+  modalOverlay.id = 'paymentOptionsModal';
+  
+  const modalContent = document.createElement('div');
+  modalContent.className = 'bg-white rounded-lg w-[90%] max-w-[320px]';
+  
+  // Modal header
+  const modalHeader = document.createElement('div');
+  modalHeader.className = 'flex justify-between items-center p-4 border-b border-gray-200';
+  modalHeader.innerHTML = `
+    <h3 class="text-lg font-medium">Payment Options</h3>
+    <button id="closePaymentOptionsModal" class="w-8 h-8 flex items-center justify-center">
+      <i class="ri-close-line ri-lg text-gray-600"></i>
+    </button>
+  `;
+  
+  // Modal body
+  const modalBody = document.createElement('div');
+  modalBody.className = 'p-4';
+  
+  // Payment options grid
+  const paymentOptions = document.createElement('div');
+  paymentOptions.className = 'grid grid-cols-2 gap-4';
+  paymentOptions.innerHTML = `
+    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
+      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+        <i class="ri-qr-code-line ri-xl text-primary"></i>
+      </div>
+      <p class="text-sm font-medium text-center">QR Payment</p>
+    </div>
+    
+    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
+      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+        <i class="ri-contactless-line ri-xl text-primary"></i>
+      </div>
+      <p class="text-sm font-medium text-center">NFC Payment</p>
+    </div>
+    
+    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
+      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+        <i class="ri-bank-line ri-xl text-primary"></i>
+      </div>
+      <p class="text-sm font-medium text-center">Bank Transfer</p>
+    </div>
+    
+    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
+      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+        <i class="ri-bill-line ri-xl text-primary"></i>
+      </div>
+      <p class="text-sm font-medium text-center">Bill Payment</p>
+    </div>
+    
+    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
+      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+        <i class="ri-send-plane-line ri-xl text-primary"></i>
+      </div>
+      <p class="text-sm font-medium text-center">Send Money</p>
+    </div>
+    
+    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
+      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+        <i class="ri-arrow-down-line ri-xl text-primary"></i>
+      </div>
+      <p class="text-sm font-medium text-center">Request Money</p>
+    </div>
+  `;
+  
+  // Assemble modal
+  modalBody.appendChild(paymentOptions);
+  modalContent.appendChild(modalHeader);
+  modalContent.appendChild(modalBody);
+  modalOverlay.appendChild(modalContent);
+  
+  return modalOverlay;
+}
+let paymentOptionsModalOpen = false;
+function openPaymentOptionsModal() {
+  if (paymentOptionsModalOpen) return;
+  
+  const modal = createPaymentOptionsModal();
+  document.body.appendChild(modal);
+  paymentOptionsModalOpen = true;
+  
+  // Add event listeners
+  document.getElementById('closePaymentOptionsModal').addEventListener('click', closePaymentOptionsModal);
+  
+  // Prevent body scrolling
+  document.body.style.overflow = 'hidden';
+}
+function closePaymentOptionsModal() {
+  const modal = document.getElementById('paymentOptionsModal');
+  if (modal) {
+    modal.remove();
+    paymentOptionsModalOpen = false;
+    document.body.style.overflow = '';
+  }
+}
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+createAnimatedBackground();
+// Profile button click event
+const profileButton = document.getElementById('profileButton');
+profileButton.addEventListener('click', (e) => {
+e.stopPropagation();
+toggleProfileMenu();
+});
+// Add Money button click event
+const addMoneyBtn = document.getElementById('addMoneyBtn');
+addMoneyBtn.addEventListener('click', openAddMoneyModal);
+// Pay button click event
+const payButton = document.getElementById('payButton');
+payButton.addEventListener('click', openPaymentOptionsModal);
+});
+</script>
+</body>
+</html>
