@@ -433,7 +433,7 @@ Details
 </div>
 <span class="text-xs text-primary mt-1">Home</span>
 </div>
-<div class="flex flex-col items-center justify-center cursor-pointer">
+<div class="flex flex-col items-center justify-center cursor-pointer" id="cardsButton">
 <div class="w-6 h-6 flex items-center justify-center">
 <i class="ri-bank-card-line ri-lg text-gray-500"></i>
 </div>
@@ -445,18 +445,18 @@ Details
 </div>
 <span class="text-xs text-gray-500 mt-8">Pay</span>
 </div>
-<div class="flex flex-col items-center justify-center cursor-pointer">
+<div id="analyticsButton" class="flex flex-col items-center justify-center cursor-pointer">
 <div class="w-6 h-6 flex items-center justify-center">
 <i class="ri-pie-chart-line ri-lg text-gray-500"></i>
 </div>
 <span class="text-xs text-gray-500 mt-1">Analytics</span>
 </div>
-<a href="https://readdy.ai/home/68aa2166-d9c2-4a1a-9e8b-f6c2b28fe13a/17147c71-f85e-4d51-aac3-40b3a83dd7a8" data-readdy="true" class="flex flex-col items-center justify-center cursor-pointer">
+<div id="settingsButton" class="flex flex-col items-center justify-center cursor-pointer">
 <div class="w-6 h-6 flex items-center justify-center">
 <i class="ri-settings-3-line ri-lg text-gray-500"></i>
 </div>
 <span class="text-xs text-gray-500 mt-1">Settings</span>
-</a>
+</div>
 </div>
 </div>
 </div>
@@ -1006,103 +1006,629 @@ document.body.style.overflow = '';
 }
 // Payment Options Modal
 function createPaymentOptionsModal() {
-  const modalOverlay = document.createElement('div');
-  modalOverlay.className = 'fixed inset-0 bg-black/50 z-[100] flex items-center justify-center';
-  modalOverlay.id = 'paymentOptionsModal';
-  
-  const modalContent = document.createElement('div');
-  modalContent.className = 'bg-white rounded-lg w-[90%] max-w-[320px]';
-  
-  // Modal header
-  const modalHeader = document.createElement('div');
-  modalHeader.className = 'flex justify-between items-center p-4 border-b border-gray-200';
-  modalHeader.innerHTML = `
-    <h3 class="text-lg font-medium">Payment Options</h3>
-    <button id="closePaymentOptionsModal" class="w-8 h-8 flex items-center justify-center">
-      <i class="ri-close-line ri-lg text-gray-600"></i>
-    </button>
-  `;
-  
-  // Modal body
-  const modalBody = document.createElement('div');
-  modalBody.className = 'p-4';
-  
-  // Payment options grid
-  const paymentOptions = document.createElement('div');
-  paymentOptions.className = 'grid grid-cols-2 gap-4';
-  paymentOptions.innerHTML = `
-    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
-      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
-        <i class="ri-qr-code-line ri-xl text-primary"></i>
-      </div>
-      <p class="text-sm font-medium text-center">QR Payment</p>
-    </div>
-    
-    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
-      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
-        <i class="ri-contactless-line ri-xl text-primary"></i>
-      </div>
-      <p class="text-sm font-medium text-center">NFC Payment</p>
-    </div>
-    
-    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
-      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
-        <i class="ri-bank-line ri-xl text-primary"></i>
-      </div>
-      <p class="text-sm font-medium text-center">Bank Transfer</p>
-    </div>
-    
-    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
-      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
-        <i class="ri-bill-line ri-xl text-primary"></i>
-      </div>
-      <p class="text-sm font-medium text-center">Bill Payment</p>
-    </div>
-    
-    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
-      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
-        <i class="ri-send-plane-line ri-xl text-primary"></i>
-      </div>
-      <p class="text-sm font-medium text-center">Send Money</p>
-    </div>
-    
-    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
-      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
-        <i class="ri-arrow-down-line ri-xl text-primary"></i>
-      </div>
-      <p class="text-sm font-medium text-center">Request Money</p>
-    </div>
-  `;
-  
-  // Assemble modal
-  modalBody.appendChild(paymentOptions);
-  modalContent.appendChild(modalHeader);
-  modalContent.appendChild(modalBody);
-  modalOverlay.appendChild(modalContent);
-  
-  return modalOverlay;
+const modalOverlay = document.createElement('div');
+modalOverlay.className = 'fixed inset-0 bg-black/50 z-[100] flex items-center justify-center';
+modalOverlay.id = 'paymentOptionsModal';
+const modalContent = document.createElement('div');
+modalContent.className = 'bg-white rounded-lg w-[90%] max-w-[320px]';
+// Modal header
+const modalHeader = document.createElement('div');
+modalHeader.className = 'flex justify-between items-center p-4 border-b border-gray-200';
+modalHeader.innerHTML = `
+<h3 class="text-lg font-medium">Payment Options</h3>
+<button id="closePaymentOptionsModal" class="w-8 h-8 flex items-center justify-center">
+<i class="ri-close-line ri-lg text-gray-600"></i>
+</button>
+`;
+// Modal body
+const modalBody = document.createElement('div');
+modalBody.className = 'p-4';
+// Payment options grid
+const paymentOptions = document.createElement('div');
+paymentOptions.className = 'grid grid-cols-2 gap-4';
+paymentOptions.innerHTML = `
+<div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+<i class="ri-qr-code-line ri-xl text-primary"></i>
+</div>
+<p class="text-sm font-medium text-center">QR Payment</p>
+</div>
+<div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+<i class="ri-contactless-line ri-xl text-primary"></i>
+</div>
+<p class="text-sm font-medium text-center">NFC Payment</p>
+</div>
+<div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+<i class="ri-bank-line ri-xl text-primary"></i>
+</div>
+<p class="text-sm font-medium text-center">Bank Transfer</p>
+</div>
+<div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+<i class="ri-bill-line ri-xl text-primary"></i>
+</div>
+<p class="text-sm font-medium text-center">Bill Payment</p>
+</div>
+<div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+<i class="ri-send-plane-line ri-xl text-primary"></i>
+</div>
+<p class="text-sm font-medium text-center">Send Money</p>
+</div>
+<div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100 cursor-pointer hover:bg-primary/5 hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+<i class="ri-arrow-down-line ri-xl text-primary"></i>
+</div>
+<p class="text-sm font-medium text-center">Request Money</p>
+</div>
+`;
+// Assemble modal
+modalBody.appendChild(paymentOptions);
+modalContent.appendChild(modalHeader);
+modalContent.appendChild(modalBody);
+modalOverlay.appendChild(modalContent);
+return modalOverlay;
 }
 let paymentOptionsModalOpen = false;
 function openPaymentOptionsModal() {
-  if (paymentOptionsModalOpen) return;
-  
-  const modal = createPaymentOptionsModal();
-  document.body.appendChild(modal);
-  paymentOptionsModalOpen = true;
-  
-  // Add event listeners
-  document.getElementById('closePaymentOptionsModal').addEventListener('click', closePaymentOptionsModal);
-  
-  // Prevent body scrolling
-  document.body.style.overflow = 'hidden';
+if (paymentOptionsModalOpen) return;
+const modal = createPaymentOptionsModal();
+document.body.appendChild(modal);
+paymentOptionsModalOpen = true;
+// Add event listeners
+document.getElementById('closePaymentOptionsModal').addEventListener('click', closePaymentOptionsModal);
+// Prevent body scrolling
+document.body.style.overflow = 'hidden';
 }
 function closePaymentOptionsModal() {
-  const modal = document.getElementById('paymentOptionsModal');
-  if (modal) {
-    modal.remove();
-    paymentOptionsModalOpen = false;
-    document.body.style.overflow = '';
-  }
+const modal = document.getElementById('paymentOptionsModal');
+if (modal) {
+modal.remove();
+paymentOptionsModalOpen = false;
+document.body.style.overflow = '';
+}
+}
+// Cards Modal
+function createCardsModal() {
+const modalOverlay = document.createElement('div');
+modalOverlay.className = 'fixed inset-0 bg-black/50 z-[100] flex items-center justify-center';
+modalOverlay.id = 'cardsModal';
+const modalContent = document.createElement('div');
+modalContent.className = 'bg-white rounded-lg w-[90%] max-h-[80%] overflow-y-auto';
+// Modal header
+const modalHeader = document.createElement('div');
+modalHeader.className = 'flex justify-between items-center p-4 border-b border-gray-200';
+modalHeader.innerHTML = `
+<h3 class="text-lg font-medium">My Cards</h3>
+<button id="closeCardsModal" class="w-8 h-8 flex items-center justify-center">
+<i class="ri-close-line ri-lg text-gray-600"></i>
+</button>
+`;
+// Modal body
+const modalBody = document.createElement('div');
+modalBody.className = 'p-4';
+// Cards section
+const cardsSection = document.createElement('div');
+cardsSection.className = 'space-y-4';
+// Card 1
+const card1 = document.createElement('div');
+card1.className = 'rounded-lg overflow-hidden';
+card1.innerHTML = `
+<div class="gradient-card p-4 text-white">
+<div class="flex justify-between items-center mb-4">
+<div>
+<p class="text-xs text-white/80">Debit Card</p>
+<h2 class="text-lg font-semibold mt-1">DSB Bank</h2>
+</div>
+<div class="w-10 h-10 flex items-center justify-center">
+<i class="ri-visa-line ri-xl text-white"></i>
+</div>
+</div>
+<p class="text-base font-medium">•••• •••• •••• 4587</p>
+<div class="flex justify-between items-center mt-4">
+<div>
+<p class="text-xs text-white/80">Valid Thru</p>
+<p class="text-sm">05/28</p>
+</div>
+<div>
+<p class="text-xs text-white/80">CVV</p>
+<p class="text-sm">•••</p>
+</div>
+<div>
+<p class="text-xs text-white/80">Card Holder</p>
+<p class="text-sm">Michael Fernandes</p>
+</div>
+</div>
+</div>
+<div class="bg-white p-4 border border-gray-200 rounded-b-lg">
+<div class="flex justify-between items-center">
+<div>
+<p class="text-sm font-medium">Card Balance</p>
+<p class="text-lg font-semibold text-gray-900">SRD 3,245.50</p>
+</div>
+<div class="flex gap-2">
+<button class="add-to-wallet-btn bg-primary/10 text-primary p-2 !rounded-button">
+<i class="ri-wallet-3-line ri-lg"></i>
+</button>
+<button class="bg-primary/10 text-primary p-2 !rounded-button">
+<i class="ri-lock-line ri-lg"></i>
+</button>
+</div>
+</div>
+</div>
+`;
+// Card 2
+const card2 = document.createElement('div');
+card2.className = 'rounded-lg overflow-hidden';
+card2.innerHTML = `
+<div style="background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);" class="p-4 text-white">
+<div class="flex justify-between items-center mb-4">
+<div>
+<p class="text-xs text-white/80">Credit Card</p>
+<h2 class="text-lg font-semibold mt-1">Hakrin Bank</h2>
+</div>
+<div class="w-10 h-10 flex items-center justify-center">
+<i class="ri-mastercard-line ri-xl text-white"></i>
+</div>
+</div>
+<p class="text-base font-medium">•••• •••• •••• 7821</p>
+<div class="flex justify-between items-center mt-4">
+<div>
+<p class="text-xs text-white/80">Valid Thru</p>
+<p class="text-sm">09/26</p>
+</div>
+<div>
+<p class="text-xs text-white/80">CVV</p>
+<p class="text-sm">•••</p>
+</div>
+<div>
+<p class="text-xs text-white/80">Card Holder</p>
+<p class="text-sm">Michael Fernandes</p>
+</div>
+</div>
+</div>
+<div class="bg-white p-4 border border-gray-200 rounded-b-lg">
+<div class="flex justify-between items-center">
+<div>
+<p class="text-sm font-medium">Credit Limit</p>
+<p class="text-lg font-semibold text-gray-900">SRD 10,000.00</p>
+<p class="text-xs text-gray-500">Available: SRD 7,450.25</p>
+</div>
+<div class="flex gap-2">
+<button class="add-to-wallet-btn bg-primary/10 text-primary p-2 !rounded-button">
+<i class="ri-wallet-3-line ri-lg"></i>
+</button>
+<button class="bg-primary/10 text-primary p-2 !rounded-button">
+<i class="ri-lock-line ri-lg"></i>
+</button>
+</div>
+</div>
+</div>
+`;
+// Add New Card button
+const addCardButton = document.createElement('div');
+addCardButton.className = 'border border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50';
+addCardButton.innerHTML = `
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+<i class="ri-add-line ri-xl text-primary"></i>
+</div>
+<p class="text-sm font-medium text-gray-700">Add New Card</p>
+<p class="text-xs text-gray-500 mt-1">Link a debit or credit card</p>
+`;
+// Digital Wallet section
+const walletSection = document.createElement('div');
+walletSection.className = 'mt-6';
+walletSection.innerHTML = `
+<h4 class="font-medium mb-3">Digital Wallets</h4>
+<div class="grid grid-cols-2 gap-3">
+<div class="border border-gray-200 rounded-lg p-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-black flex items-center justify-center">
+<i class="ri-apple-fill ri-lg text-white"></i>
+</div>
+<div>
+<p class="text-sm font-medium">Apple Pay</p>
+<p class="text-xs text-gray-500">2 cards added</p>
+</div>
+</div>
+<div class="border border-gray-200 rounded-lg p-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+<i class="ri-google-fill ri-lg text-white"></i>
+</div>
+<div>
+<p class="text-sm font-medium">Google Pay</p>
+<p class="text-xs text-gray-500">1 card added</p>
+</div>
+</div>
+</div>
+`;
+// Card Settings section
+const settingsSection = document.createElement('div');
+settingsSection.className = 'mt-6 p-4 bg-gray-50 rounded-lg';
+settingsSection.innerHTML = `
+<h4 class="font-medium mb-3">Card Settings</h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<div>
+<p class="text-sm font-medium">Online Transactions</p>
+<p class="text-xs text-gray-500">Enable or disable online payments</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only peer" checked>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex justify-between items-center">
+<div>
+<p class="text-sm font-medium">International Transactions</p>
+<p class="text-xs text-gray-500">Allow payments outside Suriname</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only peer">
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex justify-between items-center">
+<div>
+<p class="text-sm font-medium">ATM Withdrawals</p>
+<p class="text-xs text-gray-500">Allow cash withdrawals</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only peer" checked>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+`;
+// Assemble modal
+cardsSection.appendChild(card1);
+cardsSection.appendChild(card2);
+cardsSection.appendChild(addCardButton);
+modalBody.appendChild(cardsSection);
+modalBody.appendChild(walletSection);
+modalBody.appendChild(settingsSection);
+modalContent.appendChild(modalHeader);
+modalContent.appendChild(modalBody);
+modalOverlay.appendChild(modalContent);
+return modalOverlay;
+}
+let cardsModalOpen = false;
+function openCardsModal() {
+if (cardsModalOpen) return;
+const modal = createCardsModal();
+document.body.appendChild(modal);
+cardsModalOpen = true;
+// Add event listeners
+document.getElementById('closeCardsModal').addEventListener('click', closeCardsModal);
+// Add to wallet buttons
+const addToWalletBtns = document.querySelectorAll('.add-to-wallet-btn');
+addToWalletBtns.forEach(btn => {
+btn.addEventListener('click', showWalletOptions);
+});
+// Prevent body scrolling
+document.body.style.overflow = 'hidden';
+}
+function closeCardsModal() {
+const modal = document.getElementById('cardsModal');
+if (modal) {
+modal.remove();
+cardsModalOpen = false;
+document.body.style.overflow = '';
+}
+}
+function showWalletOptions(e) {
+e.stopPropagation();
+// Create wallet options popup
+const walletPopup = document.createElement('div');
+walletPopup.className = 'fixed inset-0 bg-black/50 z-[101] flex items-center justify-center';
+walletPopup.id = 'walletOptionsPopup';
+walletPopup.innerHTML = `
+<div class="bg-white rounded-lg p-4 w-[80%] max-w-[300px]">
+<h4 class="font-medium mb-4 text-center">Add to Digital Wallet</h4>
+<div class="space-y-3">
+<button class="w-full flex items-center gap-3 border border-gray-200 rounded-lg p-3 hover:bg-gray-50">
+<div class="w-10 h-10 rounded-full bg-black flex items-center justify-center">
+<i class="ri-apple-fill ri-lg text-white"></i>
+</div>
+<span class="text-sm font-medium">Add to Apple Pay</span>
+</button>
+<button class="w-full flex items-center gap-3 border border-gray-200 rounded-lg p-3 hover:bg-gray-50">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+<i class="ri-google-fill ri-lg text-white"></i>
+</div>
+<span class="text-sm font-medium">Add to Google Pay</span>
+</button>
+<button class="w-full flex items-center gap-3 border border-gray-200 rounded-lg p-3 hover:bg-gray-50">
+<div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
+<i class="ri-samsung-fill ri-lg text-white"></i>
+</div>
+<span class="text-sm font-medium">Add to Samsung Pay</span>
+</button>
+</div>
+<button id="closeWalletOptions" class="w-full mt-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium">Cancel</button>
+</div>
+`;
+document.body.appendChild(walletPopup);
+document.getElementById('closeWalletOptions').addEventListener('click', () => {
+walletPopup.remove();
+});
+// Close when clicking outside
+walletPopup.addEventListener('click', (e) => {
+if (e.target === walletPopup) {
+walletPopup.remove();
+}
+});
+}
+// Settings Modal
+function createSettingsModal() {
+const modalOverlay = document.createElement('div');
+modalOverlay.className = 'fixed inset-0 bg-black/50 z-[100] flex items-center justify-center';
+modalOverlay.id = 'settingsModal';
+const modalContent = document.createElement('div');
+modalContent.className = 'bg-white rounded-lg w-[90%] max-h-[80%] overflow-y-auto';
+// Modal header
+const modalHeader = document.createElement('div');
+modalHeader.className = 'flex justify-between items-center p-4 border-b border-gray-200';
+modalHeader.innerHTML = `
+<h3 class="text-lg font-medium">Settings</h3>
+<button id="closeSettingsModal" class="w-8 h-8 flex items-center justify-center">
+<i class="ri-close-line ri-lg text-gray-600"></i>
+</button>
+`;
+// Modal body
+const modalBody = document.createElement('div');
+modalBody.className = 'p-4';
+// Account Settings
+const accountSection = document.createElement('div');
+accountSection.className = 'mb-6';
+accountSection.innerHTML = `
+<h4 class="font-medium mb-3">Account Settings</h4>
+<div class="space-y-2">
+<a href="#" class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-user-settings-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Personal Information</span>
+</div>
+<i class="ri-arrow-right-s-line ri-lg text-gray-400"></i>
+</a>
+<a href="#" class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-bank-card-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Payment Methods</span>
+</div>
+<i class="ri-arrow-right-s-line ri-lg text-gray-400"></i>
+</a>
+<a href="#" class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-bank-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Linked Accounts</span>
+</div>
+<i class="ri-arrow-right-s-line ri-lg text-gray-400"></i>
+</a>
+</div>
+`;
+// Security Settings
+const securitySection = document.createElement('div');
+securitySection.className = 'mb-6';
+securitySection.innerHTML = `
+<h4 class="font-medium mb-3">Security</h4>
+<div class="space-y-2">
+<a href="#" class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-lock-password-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Change Password</span>
+</div>
+<i class="ri-arrow-right-s-line ri-lg text-gray-400"></i>
+</a>
+<a href="#" class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-fingerprint-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Biometric Authentication</span>
+</div>
+<i class="ri-arrow-right-s-line ri-lg text-gray-400"></i>
+</a>
+<a href="#" class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-shield-keyhole-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Two-Factor Authentication</span>
+</div>
+<div class="flex items-center">
+<span class="text-xs text-green-600 mr-2">Enabled</span>
+<i class="ri-arrow-right-s-line ri-lg text-gray-400"></i>
+</div>
+</a>
+</div>
+`;
+// Notifications
+const notificationsSection = document.createElement('div');
+notificationsSection.className = 'mb-6';
+notificationsSection.innerHTML = `
+<h4 class="font-medium mb-3">Notifications</h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<div>
+<p class="text-sm font-medium">Push Notifications</p>
+<p class="text-xs text-gray-500">Receive alerts on your device</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only peer" checked>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex justify-between items-center">
+<div>
+<p class="text-sm font-medium">Email Notifications</p>
+<p class="text-xs text-gray-500">Receive transaction summaries</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only peer" checked>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex justify-between items-center">
+<div>
+<p class="text-sm font-medium">SMS Notifications</p>
+<p class="text-xs text-gray-500">Receive text alerts</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only peer">
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+`;
+// Appearance
+const appearanceSection = document.createElement('div');
+appearanceSection.className = 'mb-6';
+appearanceSection.innerHTML = `
+<h4 class="font-medium mb-3">Appearance</h4>
+<div class="p-3 bg-gray-50 rounded-lg">
+<p class="text-sm font-medium mb-3">Theme</p>
+<div class="flex gap-3">
+<label class="flex-1 cursor-pointer">
+<input type="radio" name="theme" value="light" class="sr-only peer" checked>
+<div class="p-3 border border-gray-200 rounded-lg text-center peer-checked:border-primary peer-checked:bg-primary/5">
+<div class="w-8 h-8 mx-auto rounded-full bg-white border border-gray-200 flex items-center justify-center mb-1">
+<i class="ri-sun-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-xs">Light</span>
+</div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input type="radio" name="theme" value="dark" class="sr-only peer">
+<div class="p-3 border border-gray-200 rounded-lg text-center peer-checked:border-primary peer-checked:bg-primary/5">
+<div class="w-8 h-8 mx-auto rounded-full bg-gray-800 flex items-center justify-center mb-1">
+<i class="ri-moon-line ri-lg text-white"></i>
+</div>
+<span class="text-xs">Dark</span>
+</div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input type="radio" name="theme" value="system" class="sr-only peer">
+<div class="p-3 border border-gray-200 rounded-lg text-center peer-checked:border-primary peer-checked:bg-primary/5">
+<div class="w-8 h-8 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-1">
+<i class="ri-computer-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-xs">System</span>
+</div>
+</label>
+</div>
+</div>
+`;
+// Language
+const languageSection = document.createElement('div');
+languageSection.className = 'mb-6';
+languageSection.innerHTML = `
+<h4 class="font-medium mb-3">Language & Region</h4>
+<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-global-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Language</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-sm text-gray-600">English</span>
+<i class="ri-arrow-right-s-line ri-lg text-gray-400"></i>
+</div>
+</div>
+`;
+// Help & Support
+const supportSection = document.createElement('div');
+supportSection.className = 'mb-6';
+supportSection.innerHTML = `
+<h4 class="font-medium mb-3">Help & Support</h4>
+<div class="space-y-2">
+<a href="#" class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-question-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">FAQ</span>
+</div>
+<i class="ri-arrow-right-s-line ri-lg text-gray-400"></i>
+</a>
+<a href="#" class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-customer-service-2-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Contact Support</span>
+</div>
+<i class="ri-arrow-right-s-line ri-lg text-gray-400"></i>
+</a>
+<a href="#" class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-file-list-3-line ri-lg text-gray-600"></i>
+</div>
+<span class="text-sm">Terms & Privacy Policy</span>
+</div>
+<i class="ri-arrow-right-s-line ri-lg text-gray-400"></i>
+</a>
+</div>
+`;
+// About
+const aboutSection = document.createElement('div');
+aboutSection.className = 'mb-6';
+aboutSection.innerHTML = `
+<h4 class="font-medium mb-3">About</h4>
+<div class="p-4 bg-gray-50 rounded-lg text-center">
+<img src="https://static.readdy.ai/image/1f65b128a794fd8f2ab71819fe1f8dad/1cf9a04639594e7fd5894794bb3cb5ae.png" alt="PaySr Logo" class="h-10 mx-auto mb-2">
+<p class="text-sm font-medium">PaySu Mobile Banking</p>
+<p class="text-xs text-gray-500 mt-1">Version 2.5.1</p>
+<p class="text-xs text-gray-500 mt-3">© 2025 PaySu. All rights reserved.</p>
+</div>
+`;
+// Sign Out button
+const signOutButton = document.createElement('button');
+signOutButton.className = 'w-full py-3 bg-red-50 text-red-600 rounded-lg font-medium';
+signOutButton.textContent = 'Sign Out';
+// Assemble modal
+modalBody.appendChild(accountSection);
+modalBody.appendChild(securitySection);
+modalBody.appendChild(notificationsSection);
+modalBody.appendChild(appearanceSection);
+modalBody.appendChild(languageSection);
+modalBody.appendChild(supportSection);
+modalBody.appendChild(aboutSection);
+modalBody.appendChild(signOutButton);
+modalContent.appendChild(modalHeader);
+modalContent.appendChild(modalBody);
+modalOverlay.appendChild(modalContent);
+return modalOverlay;
+}
+let settingsModalOpen = false;
+function openSettingsModal() {
+if (settingsModalOpen) return;
+const modal = createSettingsModal();
+document.body.appendChild(modal);
+settingsModalOpen = true;
+// Add event listeners
+document.getElementById('closeSettingsModal').addEventListener('click', closeSettingsModal);
+// Prevent body scrolling
+document.body.style.overflow = 'hidden';
+}
+function closeSettingsModal() {
+const modal = document.getElementById('settingsModal');
+if (modal) {
+modal.remove();
+settingsModalOpen = false;
+document.body.style.overflow = '';
+}
 }
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -1119,7 +1645,494 @@ addMoneyBtn.addEventListener('click', openAddMoneyModal);
 // Pay button click event
 const payButton = document.getElementById('payButton');
 payButton.addEventListener('click', openPaymentOptionsModal);
+// Cards button click event
+const cardsButton = document.getElementById('cardsButton');
+cardsButton.addEventListener('click', openCardsModal);
+// Settings button click event
+const settingsButton = document.getElementById('settingsButton');
+settingsButton.addEventListener('click', openSettingsModal);
+// Analytics button click event
+const analyticsButton = document.getElementById('analyticsButton');
+analyticsButton.addEventListener('click', openAnalyticsModal);
 });
+// Analytics Modal
+function createAnalyticsModal() {
+  const modalOverlay = document.createElement('div');
+  modalOverlay.className = 'fixed inset-0 bg-black/50 z-[100] flex items-center justify-center';
+  modalOverlay.id = 'analyticsModal';
+  
+  const modalContent = document.createElement('div');
+  modalContent.className = 'bg-white rounded-lg w-[90%] max-h-[80%] overflow-y-auto';
+  
+  // Modal header
+  const modalHeader = document.createElement('div');
+  modalHeader.className = 'flex justify-between items-center p-4 border-b border-gray-200';
+  modalHeader.innerHTML = `
+    <h3 class="text-lg font-medium">Financial Analytics</h3>
+    <button id="closeAnalyticsModal" class="w-8 h-8 flex items-center justify-center">
+      <i class="ri-close-line ri-lg text-gray-600"></i>
+    </button>
+  `;
+  
+  // Modal body
+  const modalBody = document.createElement('div');
+  modalBody.className = 'p-4';
+  
+  // Time period selector
+  const periodSelector = document.createElement('div');
+  periodSelector.className = 'mb-6';
+  periodSelector.innerHTML = `
+    <div class="flex justify-between items-center mb-3">
+      <h4 class="font-medium">Overview</h4>
+      <div class="relative">
+        <select id="timePeriodSelect" class="appearance-none bg-gray-50 border border-gray-200 rounded-lg py-2 pl-3 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+          <option value="week">This Week</option>
+          <option value="month" selected>This Month</option>
+          <option value="quarter">This Quarter</option>
+          <option value="year">This Year</option>
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+          <i class="ri-arrow-down-s-line"></i>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Summary cards
+  const summaryCards = document.createElement('div');
+  summaryCards.className = 'grid grid-cols-2 gap-3 mb-6';
+  summaryCards.innerHTML = `
+    <div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+      <p class="text-xs text-gray-500">Income</p>
+      <h3 class="text-lg font-semibold text-green-600">SRD 5,850.00</h3>
+      <div class="flex items-center gap-1 mt-1">
+        <i class="ri-arrow-up-line text-green-600"></i>
+        <span class="text-xs text-green-600">12% vs last month</span>
+      </div>
+    </div>
+    <div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+      <p class="text-xs text-gray-500">Expenses</p>
+      <h3 class="text-lg font-semibold text-red-600">SRD 3,245.75</h3>
+      <div class="flex items-center gap-1 mt-1">
+        <i class="ri-arrow-down-line text-green-600"></i>
+        <span class="text-xs text-green-600">5% vs last month</span>
+      </div>
+    </div>
+    <div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+      <p class="text-xs text-gray-500">Savings</p>
+      <h3 class="text-lg font-semibold text-blue-600">SRD 2,604.25</h3>
+      <div class="flex items-center gap-1 mt-1">
+        <i class="ri-arrow-up-line text-green-600"></i>
+        <span class="text-xs text-green-600">45% vs last month</span>
+      </div>
+    </div>
+    <div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+      <p class="text-xs text-gray-500">Net Cashflow</p>
+      <h3 class="text-lg font-semibold text-primary">SRD 2,604.25</h3>
+      <div class="flex items-center gap-1 mt-1">
+        <i class="ri-arrow-up-line text-green-600"></i>
+        <span class="text-xs text-green-600">38% vs last month</span>
+      </div>
+    </div>
+  `;
+  
+  // Spending chart
+  const spendingChart = document.createElement('div');
+  spendingChart.className = 'mb-6';
+  spendingChart.innerHTML = `
+    <div class="flex justify-between items-center mb-3">
+      <h4 class="font-medium">Monthly Cashflow</h4>
+    </div>
+    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100">
+      <div id="cashflowChart" style="width: 100%; height: 250px;"></div>
+    </div>
+  `;
+  
+  // Spending by category
+  const spendingByCategory = document.createElement('div');
+  spendingByCategory.className = 'mb-6';
+  spendingByCategory.innerHTML = `
+    <div class="flex justify-between items-center mb-3">
+      <h4 class="font-medium">Spending by Category</h4>
+    </div>
+    <div class="bg-white shadow-sm rounded-lg p-4 border border-gray-100">
+      <div class="flex">
+        <div id="categoryChart" style="width: 50%; height: 200px;"></div>
+        <div class="w-1/2 pl-2">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-primary"></div>
+                <span class="text-xs">Groceries</span>
+              </div>
+              <span class="text-xs font-medium">SRD 875.50 (27%)</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                <span class="text-xs">Dining</span>
+              </div>
+              <span class="text-xs font-medium">SRD 650.25 (20%)</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <span class="text-xs">Transportation</span>
+              </div>
+              <span class="text-xs font-medium">SRD 520.00 (16%)</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                <span class="text-xs">Utilities</span>
+              </div>
+              <span class="text-xs font-medium">SRD 450.00 (14%)</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <span class="text-xs">Entertainment</span>
+              </div>
+              <span class="text-xs font-medium">SRD 325.00 (10%)</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-gray-500"></div>
+                <span class="text-xs">Others</span>
+              </div>
+              <span class="text-xs font-medium">SRD 425.00 (13%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Recent transactions
+  const recentTransactions = document.createElement('div');
+  recentTransactions.className = 'mb-6';
+  recentTransactions.innerHTML = `
+    <div class="flex justify-between items-center mb-3">
+      <h4 class="font-medium">Recent Transactions</h4>
+      <button class="text-primary text-sm">See All</button>
+    </div>
+    <div class="space-y-3">
+      <div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <i class="ri-shopping-bag-line ri-lg text-blue-600"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium">Choi's Supermarket</h4>
+              <p class="text-xs text-gray-500">Today, 9:45 AM</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-medium text-red-600">-SRD 125.50</p>
+            <p class="text-xs text-gray-500">Groceries</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+              <i class="ri-user-line ri-lg text-purple-600"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium">Jennifer Pawiroredjo</h4>
+              <p class="text-xs text-gray-500">Yesterday, 4:30 PM</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-medium text-green-600">+SRD 350.00</p>
+            <p class="text-xs text-gray-500">Transfer</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+              <i class="ri-restaurant-line ri-lg text-orange-600"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium">Javanese Kitchen</h4>
+              <p class="text-xs text-gray-500">Apr 5, 7:15 PM</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-medium text-red-600">-SRD 87.25</p>
+            <p class="text-xs text-gray-500">Dining</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Budget tracking
+  const budgetTracking = document.createElement('div');
+  budgetTracking.className = 'mb-6';
+  budgetTracking.innerHTML = `
+    <div class="flex justify-between items-center mb-3">
+      <h4 class="font-medium">Budget Tracking</h4>
+      <button class="text-primary text-sm">Manage</button>
+    </div>
+    <div class="space-y-4">
+      <div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+        <div class="flex justify-between items-center mb-1">
+          <div>
+            <h4 class="text-sm font-medium">Groceries</h4>
+            <p class="text-xs text-gray-500">Monthly budget: SRD 1,000.00</p>
+          </div>
+          <p class="text-sm font-medium">88%</p>
+        </div>
+        <div class="w-full h-2 bg-gray-200 rounded-full">
+          <div class="h-full w-[88%] bg-yellow-500 rounded-full"></div>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">SRD 875.50 spent of SRD 1,000.00</p>
+      </div>
+      <div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+        <div class="flex justify-between items-center mb-1">
+          <div>
+            <h4 class="text-sm font-medium">Dining</h4>
+            <p class="text-xs text-gray-500">Monthly budget: SRD 800.00</p>
+          </div>
+          <p class="text-sm font-medium">81%</p>
+        </div>
+        <div class="w-full h-2 bg-gray-200 rounded-full">
+          <div class="h-full w-[81%] bg-yellow-500 rounded-full"></div>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">SRD 650.25 spent of SRD 800.00</p>
+      </div>
+      <div class="bg-white shadow-sm rounded-lg p-3 border border-gray-100">
+        <div class="flex justify-between items-center mb-1">
+          <div>
+            <h4 class="text-sm font-medium">Entertainment</h4>
+            <p class="text-xs text-gray-500">Monthly budget: SRD 500.00</p>
+          </div>
+          <p class="text-sm font-medium">65%</p>
+        </div>
+        <div class="w-full h-2 bg-gray-200 rounded-full">
+          <div class="h-full w-[65%] bg-green-500 rounded-full"></div>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">SRD 325.00 spent of SRD 500.00</p>
+      </div>
+    </div>
+  `;
+  
+  // Financial insights
+  const financialInsights = document.createElement('div');
+  financialInsights.className = 'mb-6';
+  financialInsights.innerHTML = `
+    <div class="flex justify-between items-center mb-3">
+      <h4 class="font-medium">Financial Insights</h4>
+    </div>
+    <div class="space-y-3">
+      <div class="bg-primary/10 rounded-lg p-4">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mt-1">
+            <i class="ri-line-chart-line ri-lg text-primary"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-medium text-primary">Spending Trend</h4>
+            <p class="text-xs text-gray-700 mt-1">Your spending on groceries has increased by 15% compared to last month. Consider reviewing your grocery shopping habits.</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-blue-50 rounded-lg p-4">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mt-1">
+            <i class="ri-money-dollar-circle-line ri-lg text-blue-600"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-medium text-blue-600">Saving Opportunity</h4>
+            <p class="text-xs text-gray-700 mt-1">You could save approximately SRD 200 per month by reducing your dining expenses. Consider cooking at home more often.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Assemble modal
+  modalBody.appendChild(periodSelector);
+  modalBody.appendChild(summaryCards);
+  modalBody.appendChild(spendingChart);
+  modalBody.appendChild(spendingByCategory);
+  modalBody.appendChild(budgetTracking);
+  modalBody.appendChild(recentTransactions);
+  modalBody.appendChild(financialInsights);
+  
+  modalContent.appendChild(modalHeader);
+  modalContent.appendChild(modalBody);
+  modalOverlay.appendChild(modalContent);
+  
+  return modalOverlay;
+}
+let analyticsModalOpen = false;
+function openAnalyticsModal() {
+  if (analyticsModalOpen) return;
+  
+  // Add ECharts script if not already loaded
+  if (!window.echarts) {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js';
+    script.onload = function() {
+      renderAnalyticsModal();
+    };
+    document.head.appendChild(script);
+  } else {
+    renderAnalyticsModal();
+  }
+}
+function renderAnalyticsModal() {
+  const modal = createAnalyticsModal();
+  document.body.appendChild(modal);
+  analyticsModalOpen = true;
+  
+  // Add event listeners
+  document.getElementById('closeAnalyticsModal').addEventListener('click', closeAnalyticsModal);
+  
+  // Initialize charts after modal is added to DOM
+  setTimeout(() => {
+    initCashflowChart();
+    initCategoryChart();
+  }, 100);
+  
+  // Prevent body scrolling
+  document.body.style.overflow = 'hidden';
+}
+function closeAnalyticsModal() {
+  const modal = document.getElementById('analyticsModal');
+  if (modal) {
+    modal.remove();
+    analyticsModalOpen = false;
+    document.body.style.overflow = '';
+  }
+}
+function initCashflowChart() {
+  const chartDom = document.getElementById('cashflowChart');
+  if (!chartDom) return;
+  
+  const myChart = echarts.init(chartDom);
+  
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      }
+    },
+    legend: {
+      data: ['Income', 'Expenses', 'Net'],
+      bottom: 0
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '15%',
+      top: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: 'Income',
+        type: 'bar',
+        stack: 'total',
+        emphasis: {
+          focus: 'series'
+        },
+        data: [4200, 4800, 5000, 5200, 5500, 5800, 5850],
+        color: '#10b981'
+      },
+      {
+        name: 'Expenses',
+        type: 'bar',
+        stack: 'total',
+        emphasis: {
+          focus: 'series'
+        },
+        data: [3100, 3300, 3400, 3200, 3500, 3400, 3245],
+        color: '#ef4444'
+      },
+      {
+        name: 'Net',
+        type: 'line',
+        emphasis: {
+          focus: 'series'
+        },
+        data: [1100, 1500, 1600, 2000, 2000, 2400, 2605],
+        color: '#0d7b3a'
+      }
+    ]
+  };
+  
+  myChart.setOption(option);
+  
+  // Handle resize
+  window.addEventListener('resize', function() {
+    myChart.resize();
+  });
+}
+function initCategoryChart() {
+  const chartDom = document.getElementById('categoryChart');
+  if (!chartDom) return;
+  
+  const myChart = echarts.init(chartDom);
+  
+  const option = {
+    tooltip: {
+      trigger: 'item',
+      formatter: '{b}: {c} ({d}%)'
+    },
+    series: [
+      {
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        label: {
+          show: false
+        },
+        emphasis: {
+          label: {
+            show: false
+          }
+        },
+        labelLine: {
+          show: false
+        },
+        data: [
+          { value: 875.50, name: 'Groceries', itemStyle: { color: '#0d7b3a' } },
+          { value: 650.25, name: 'Dining', itemStyle: { color: '#3b82f6' } },
+          { value: 520.00, name: 'Transportation', itemStyle: { color: '#eab308' } },
+          { value: 450.00, name: 'Utilities', itemStyle: { color: '#a855f7' } },
+          { value: 325.00, name: 'Entertainment', itemStyle: { color: '#ef4444' } },
+          { value: 425.00, name: 'Others', itemStyle: { color: '#6b7280' } }
+        ]
+      }
+    ]
+  };
+  
+  myChart.setOption(option);
+  
+  // Handle resize
+  window.addEventListener('resize', function() {
+    myChart.resize();
+  });
+}
 </script>
 </body>
 </html>
